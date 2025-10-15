@@ -1,0 +1,55 @@
+<div *ngIf="loading" class="loading">Carregando...</div>
+<div *ngIf="!loading && filteredTasks.length === 0" class="empty">Nenhuma tarefa ainda.</div>
+
+<div>
+  <div class="task-item" *ngFor="let t of filteredTasks">
+    <label class="checkbox">
+      <input #cb type="checkbox" [checked]="t.completed" (change)="onToggle(t.id, cb.checked)" />
+      <span [class.completed]="t.completed">{{ t.title }}</span>
+    </label>
+    
+    <div class="task-meta">
+      <span class="task-date" *ngIf="t.dueDate">{{ formatDate(t.dueDate) }}</span>
+      <div class="priority-badge" [class]="'priority-' + t.priority" *ngIf="t.priority"></div>
+    </div>
+    
+    <div class="actions">
+      <button class="btn btn-outline" (click)="openEdit(t)">Editar</button>
+      <button class="btn btn-outline" (click)="onRemove(t.id)">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="formOpen">
+  <div class="modal">
+    <h3>{{ editingTask ? 'Editar Tarefa' : 'Nova Tarefa' }}</h3>
+    <form (ngSubmit)="submit()" #f="ngForm">
+      <div class="form-group">
+        <input class="input" name="title" [(ngModel)]="title" placeholder="Título da tarefa" required />
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Data de Vencimento:</label>
+        <input type="date" class="input" name="dueDate" [(ngModel)]="dueDate" />
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Prioridade:</label>
+        <select class="input" name="priority" [(ngModel)]="priority">
+          <option value="">Selecione uma prioridade</option>
+          <option value="baixa">Baixa</option>
+          <option value="média">Média</option>
+          <option value="alta">Alta</option>
+          <option value="urgente">Urgente</option>
+        </select>
+      </div>
+      
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit" [disabled]="!title.trim()">Salvar</button>
+        <button class="btn btn-outline" type="button" (click)="formOpen=false; editingTask=null">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
